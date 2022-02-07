@@ -1,38 +1,52 @@
-.App {
+.main{
+  display: flex;
+  justify-content: center;
+}
+
+.EntryLogo{
+  border-radius: 50%;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.logoImage {
+  border-radius: 50%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.entryText{
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  padding-top: 2em;
 }
 
-.App-link {
-  color: #61dafb;
+.signUpCenter {
+  text-align: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.mainHeader{
+  padding: 10px 16px;
+  background: rgb(151, 150, 150);
+  display: grid;
+  grid-area: auto;
+  grid-template-columns: repeat(2, [col] auto);
+  grid-template-rows: repeat(1,[row] auto);
+}
+
+.mainSignOut{
+  color: #1abc9c;
+  border: none;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 55%;
+}
+
+.buttonHeadAlign {
+  display: flex;
+  justify-content: end;
+}
+
+.headerImage {
+  width: 5em;
+  border-radius: 50%;
 }
