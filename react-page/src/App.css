@@ -50,3 +50,22 @@
   width: 5em;
   border-radius: 50%;
 }
+
+.gymDisplay{
+  grid-area: auto;
+  grid-template-columns: repeat(1, [col] auto);
+  grid-template-rows: repeat(2,[row] auto);
+  max-width: 15em;
+  min-height: 10em;
+  border: 1mm ridge rgba(170, 50, 220, .6);
+  margin: 2em;
+}
+
+.gymDisplayText {
+  display: flex;
+  justify-content: center;
+}
+
+.gymFavorites {
+  padding: 4em;
+}

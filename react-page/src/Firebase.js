@@ -17,6 +17,7 @@ import {
     doc,
     getDoc,
     } from "firebase/firestore";
+import GymDisplay from "./MainSite/GymDisplay";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -109,18 +110,22 @@ const registerWithEmailAndPassword = async (name, email, password) => {
  * @param {the name of the specifc gym} clubName 
  * @returns that speicif gym array (logo, website, boldering, top rope, can rent)
  */
-const getClimbingGym = async (location ,clubName) =>{
-    const ref = doc(db, "Gyms", location);
+const getClimbingGymAtributes = async (reference) =>{
+    const ref = doc(db, reference);
     
     try {
         const doc = await getDoc(ref);
         // Document was found in the cache. If no cached document exists,
         // an error will be returned to the 'catch' block below.
-        console.log("Cached document data:", doc.get(clubName));
-        return doc.get(clubName)
+        console.log("Cached getClimbingGymAtributes data:", doc.data().name);
+        return doc.data()
       } catch (e) {
         console.log("Error getting cached document:", e);
       }
+}
+
+const getGymInformation = async(reference, item) =>{
+
 }
 
 /**
@@ -149,13 +154,13 @@ const getAllGyms = async() =>{
  * @returns all clubs from one location
  */
 const getGymsFromLocation = async(location) =>{
-    const ref = doc(db, "Gyms", location)
+    const ref = doc(db, "Gyms/"+location )
     
     try {
         const doc = await getDoc(ref)
 
-        console.log("Cached document data:", doc.data())
-        return doc.data()
+        console.log("Cached getGymsFromLocation data:", doc.data().gyms)
+        return doc.data().gyms
       } catch (e) {
         console.log("Error getting cached document:", e)
       }
@@ -187,6 +192,25 @@ const getUser = () =>{
     return auth.currentUser
 }
 
+//RENDERING STUFF 
+
+//This is what I am trying to use to render different gyms
+//I tried having this in the main body and it did not work so I was
+//just using it here to see if that made a differnece. It did not. 
+const renderGymsFromLocation = async(location) =>{
+    let ref = await getGymsFromLocation(location)
+
+    let display = []
+    display.push(<GymDisplay key = {"test"} reference={"Gyms/Rochester/CRG Rochester/Atributes"}/>)
+    ref.forEach(gym => {
+        //In here seems to be the issue, nothing 
+        display.push(<GymDisplay key = {gym} reference={gym}/>)
+    })
+    
+    console.log(display,"IN FIREBASE")
+    return display
+}
+
 export {
     auth,
     db,
@@ -196,7 +220,8 @@ export {
     sendPasswordReset,
     logout,
     getUser,
-    getClimbingGym,
+    getClimbingGymAtributes,
     getAllGyms, 
-    getGymsFromLocation
+    getGymsFromLocation,
+    renderGymsFromLocation
 };
