@@ -52,10 +52,11 @@
 }
 
 .gymDisplay{
-  grid-area: auto;
-  grid-template-columns: repeat(1, [col] auto);
-  grid-template-rows: repeat(2,[row] auto);
+  /* grid-area: auto; */
+  /* grid-template-columns: repeat(1, [col] auto);
+  grid-template-rows: repeat(2,[row] auto); */
   max-width: 15em;
+  min-width: 13em;
   min-height: 10em;
   border: 1mm ridge rgba(170, 50, 220, .6);
   margin: 2em;
@@ -68,4 +69,25 @@
 
 .gymFavorites {
   padding: 4em;
+}
+
+.gymDisplayNotice{
+  display: flex;
+  justify-content: center;
+  font-size: .6em;
+}
+
+.gymDisplayBigText{
+  display: flex;
+  justify-content: center;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.gymDisplayStar{
+  width: 2em;
+  height: auto;
+  position: absolute;
+  margin-top: 1em;
+  margin-left: .5em;
 }

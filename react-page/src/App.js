@@ -15,7 +15,7 @@ function App() {
   if (user){
     return(
       <div>
-        <MainBody logoImage = {logoImage}/>
+        <MainBody logoImage = {logoImage} user ={user}/>
       </div>
     )
   } else {

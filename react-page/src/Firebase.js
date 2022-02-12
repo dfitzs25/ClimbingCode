@@ -125,7 +125,22 @@ const getClimbingGymAtributes = async (reference) =>{
 }
 
 const getGymInformation = async(reference, item) =>{
+  
+}
 
+const getUsersFavoriteGyms = async(user) =>{
+    let favorites = ""
+    console.log(user)
+
+    const q = query(collection(db, "users"), where("uid", "==", user.uid));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+
+    favorites = doc.data().Favorites
+    });
+
+    return favorites
 }
 
 /**
@@ -133,16 +148,16 @@ const getGymInformation = async(reference, item) =>{
  * @returns all Gyms in the db (by returning all locations)
  */
 const getAllGyms = async() =>{
-    const ref = collection(db, 'Gyms')
-
+    const ref = doc(db, '/GymLocations/Locations')
     try{
-        const doc = await getDocs(ref)
+        const doc = await getDoc(ref)
 
-        console.log("Got all gyms")
-        doc.forEach((doc) => {
-            console.log(doc.data())
-        })
-        return doc
+        const locations = doc.data().locations
+
+
+        console.log(locations, "ALL GYMS")
+
+        return locations
     } catch(e){
         console.log("Error getting all gyms:",e)
     }
@@ -155,11 +170,11 @@ const getAllGyms = async() =>{
  */
 const getGymsFromLocation = async(location) =>{
     const ref = doc(db, "Gyms/"+location )
-    
+
     try {
         const doc = await getDoc(ref)
 
-        console.log("Cached getGymsFromLocation data:", doc.data().gyms)
+        // console.log("Cached getGymsFromLocation data:", doc.data().gyms)
         return doc.data().gyms
       } catch (e) {
         console.log("Error getting cached document:", e)
@@ -192,25 +207,6 @@ const getUser = () =>{
     return auth.currentUser
 }
 
-//RENDERING STUFF 
-
-//This is what I am trying to use to render different gyms
-//I tried having this in the main body and it did not work so I was
-//just using it here to see if that made a differnece. It did not. 
-const renderGymsFromLocation = async(location) =>{
-    let ref = await getGymsFromLocation(location)
-
-    let display = []
-    display.push(<GymDisplay key = {"test"} reference={"Gyms/Rochester/CRG Rochester/Atributes"}/>)
-    ref.forEach(gym => {
-        //In here seems to be the issue, nothing 
-        display.push(<GymDisplay key = {gym} reference={gym}/>)
-    })
-    
-    console.log(display,"IN FIREBASE")
-    return display
-}
-
 export {
     auth,
     db,
@@ -223,5 +219,5 @@ export {
     getClimbingGymAtributes,
     getAllGyms, 
     getGymsFromLocation,
-    renderGymsFromLocation
+    getUsersFavoriteGyms,
 };
