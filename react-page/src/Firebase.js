@@ -102,8 +102,6 @@ const registerWithEmailAndPassword = async (name, email, password) => {
 
 // RETRIEVING GYM INFO METHODS BELOW 
 //
-
-
 /**
  * 
  * @param {the location of the gym} location 
@@ -124,8 +122,17 @@ const getClimbingGymAtributes = async (reference) =>{
       }
 }
 
-const getGymInformation = async(reference, item) =>{
-  
+const getUserPath = async(user) => {
+    // ViKv6N9ZuLTZM1RzloAQ
+    const q = query(collection(db, "users"), where("uid", "==", user.uid));
+
+    const querySnapshot = await getDocs(q);
+    // querySnapshot.forEach((doc) => {
+    // // doc.data() is never undefined for query doc snapshots
+    // console.log(doc.id, " => ", doc.data());
+    // });
+
+    return querySnapshot.docs[0].id
 }
 
 const getUsersFavoriteGyms = async(user) =>{
@@ -143,24 +150,27 @@ const getUsersFavoriteGyms = async(user) =>{
     return favorites
 }
 
+const getUsersFavoriteGymsWithLocation = async(user, loc) =>{
+    let favorites = await getUsersFavoriteGyms(user)
+    
+}
+
+const getUsersFavoriteGymsWithState = async(user, state) =>{
+    
+}
+
 /**
  * 
  * @returns all Gyms in the db (by returning all locations)
  */
 const getAllGyms = async() =>{
-    const ref = doc(db, '/GymLocations/Locations')
-    try{
-        const doc = await getDoc(ref)
+    const querySnapshot = await getDocs(collection(db, "GymTest"));
+    querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    console.log(doc.id, " => ", doc.data().path);
+    });
 
-        const locations = doc.data().locations
-
-
-        console.log(locations, "ALL GYMS")
-
-        return locations
-    } catch(e){
-        console.log("Error getting all gyms:",e)
-    }
+    return querySnapshot;
 }
 
 /**
@@ -169,16 +179,82 @@ const getAllGyms = async() =>{
  * @returns all clubs from one location
  */
 const getGymsFromLocation = async(location) =>{
-    const ref = doc(db, "Gyms/"+location )
+    const q = query(collection(db, "GymTest"), where("location", "==", location));
 
-    try {
-        const doc = await getDoc(ref)
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    console.log(doc.id, " => ", doc.data());
+    });
 
-        // console.log("Cached getGymsFromLocation data:", doc.data().gyms)
-        return doc.data().gyms
-      } catch (e) {
-        console.log("Error getting cached document:", e)
-      }
+    return querySnapshot
+}
+
+const getGymsFromState = async(state) => {
+    const q = query(collection(db, "GymTest"), where("state", "==", state));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    console.log(doc.id, " => ", doc.data());
+    });
+
+    return querySnapshot
+}
+
+const getAllStates = async() => {
+    let states = []
+    const querySnapshot = await getDocs(collection(db, "GymTest"));
+    querySnapshot.forEach((doc) => {
+        let state = doc.data().state
+
+        if (!states.includes(state)){
+            states.push(state)
+        }
+    });
+
+    return states;
+}
+
+const getAllLocations = async() => {
+    let locations = []
+    const querySnapshot = await getDocs(collection(db, "GymTest"))
+    querySnapshot.forEach(doc => {
+        let loc = doc.data().location
+        console.log(doc.id, " => ", loc)
+        if(!locations.includes(loc)){
+            locations.push(loc)
+        }
+    })
+
+    return locations
+}
+
+const checkGymWithFilter = async(gymRef,stateLoc,stateSta) =>{
+    console.log("TESTING THE FILTERS")
+    let valid = false
+    let gym = await getClimbingGymAtributes(gymRef)
+   
+    let loc = gym.location
+    let sta = gym.state
+    if (stateSta != "none" && stateLoc != "none"){
+        if(sta === stateSta && loc === stateLoc){
+            console.log("BOTH ARE DIFFERENT")
+            valid = true
+        } 
+    } else if (stateSta != "none"){
+        if(sta === stateSta){
+            console.log("STATE IS DIFFERENT")
+            valid =  true
+        }
+    } else if (stateLoc != "none"){
+        if(loc === stateLoc){
+            console.log("LOCATION IS DIFFERENT", loc, stateLoc, loc === stateLoc)
+            valid = true
+        }
+    }
+    
+    return valid
 }
 
 //PASSWORD RESET 
@@ -220,4 +296,9 @@ export {
     getAllGyms, 
     getGymsFromLocation,
     getUsersFavoriteGyms,
+    getGymsFromState,
+    getUserPath,
+    getAllStates,
+    getAllLocations, 
+    checkGymWithFilter
 };
