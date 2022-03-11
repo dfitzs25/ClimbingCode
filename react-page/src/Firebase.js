@@ -1,3 +1,4 @@
+import { async } from "@firebase/util";
 import { initializeApp } from "firebase/app"
 import { GoogleAuthProvider,
     getAuth,
@@ -16,6 +17,8 @@ import {
     addDoc,
     doc,
     getDoc,
+    updateDoc,
+    arrayUnion,
     } from "firebase/firestore";
 import GymDisplay from "./MainSite/GymDisplay";
 
@@ -150,15 +153,6 @@ const getUsersFavoriteGyms = async(user) =>{
     return favorites
 }
 
-const getUsersFavoriteGymsWithLocation = async(user, loc) =>{
-    let favorites = await getUsersFavoriteGyms(user)
-    
-}
-
-const getUsersFavoriteGymsWithState = async(user, state) =>{
-    
-}
-
 /**
  * 
  * @returns all Gyms in the db (by returning all locations)
@@ -257,6 +251,58 @@ const checkGymWithFilter = async(gymRef,stateLoc,stateSta) =>{
     return valid
 }
 
+const addGymToUserFavorite = async(user, gym) => {
+    let gyms = await getUsersFavoriteGyms(user)
+    let id = ""
+    const q = query(collection(db, "users"), where("uid", "==", user.uid));
+
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(doc => {
+        id = doc.id
+    })
+
+    let gymNew = []
+
+    gyms.forEach(gym => {
+        gymNew.push(gym)
+    })
+
+    gymNew.push(gym)
+
+    const ref = doc(db, "users", id)
+    
+    await updateDoc(ref, {
+        Favorites: gymNew
+    })
+}
+
+const removeGymFromUserFavorite = async(user, gym) => {
+    let gyms = await getUsersFavoriteGyms(user)
+    let id = ""
+
+    const q = query(collection(db, "users"), where("uid", "==", user.uid));
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach(doc => {
+        id = doc.id
+    })
+     
+    let gymNew = []
+
+    gyms.forEach(gymCur =>{
+        if (gymCur !== gym){
+            gymNew.push(gymCur)
+        }
+    })
+
+    const ref = doc(db, "users", id)
+    
+    await updateDoc(ref, {
+        Favorites: gymNew
+    })
+}
+
 //PASSWORD RESET 
 //
 
@@ -300,5 +346,7 @@ export {
     getUserPath,
     getAllStates,
     getAllLocations, 
-    checkGymWithFilter
+    checkGymWithFilter,
+    addGymToUserFavorite,
+    removeGymFromUserFavorite
 };

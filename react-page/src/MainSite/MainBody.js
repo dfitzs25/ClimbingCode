@@ -1,4 +1,4 @@
-import { logout,  getAllGyms, getUsersFavoriteGyms, getUserPath, getAllStates, getAllLocations, checkGymWithFilter} from '../Firebase.js';
+import { logout,  getAllGyms, getUsersFavoriteGyms, addGymToUserFavorite, checkGymWithFilter, removeGymFromUserFavorite} from '../Firebase.js';
 import React from 'react';
 import { Container, Row, Col } from 'reactstrap';
 import { collection, addDoc,getDocs } from "firebase/firestore"; 
@@ -19,7 +19,7 @@ class MainPage extends React.Component{
             user: this.props.user,
             filterOpen: false,
             locationFilter: "none",
-            stateFilter: "none"
+            stateFilter: "none",
         }
 
         this.renderFavoriteGyms = this.renderFavoriteGyms.bind(this)
@@ -27,6 +27,7 @@ class MainPage extends React.Component{
         this.toggleFilter = this.toggleFilter.bind(this)
         this.applyLocationFilter = this.applyLocationFilter.bind(this)
         this.applyStateFilter = this.applyStateFilter.bind(this)
+        this.alteredFavorites = this.alteredFavorites.bind(this)
 
         this.renderFavoriteGyms()
         this.renderOtherGyms()
@@ -36,6 +37,12 @@ class MainPage extends React.Component{
         this.setState({
             filterOpen: !this.state.filterOpen
         })
+    }
+
+    alteredFavorites(){
+        console.log("ALTERING FAVORITES THINGS")
+        this.renderFavoriteGyms()
+        this.renderOtherGyms()
     }
 
     applyLocationFilter(location){
@@ -57,9 +64,7 @@ class MainPage extends React.Component{
     }
 
     tryGetting = async() => {
-        getAllLocations().then(states => {
-            console.log(states)
-        })
+        removeGymFromUserFavorite(this.state.user,"DOGGIE")
     }
 
     getFavoritesDefault(){
@@ -73,11 +78,11 @@ class MainPage extends React.Component{
                 if (this.state.stateFilter != "none" || this.state.locationFilter != "none"){
                     checkGymWithFilter(gym,this.state.locationFilter,this.state.stateFilter).then(valid => {
                         if(valid){
-                            display.push(<GymDisplay key = {gym} reference={gym} status ={true}/>)
+                            display.push(<GymDisplay key = {gym} reference={gym} status ={true} user = {this.state.user} af = {this.alteredFavorites}/>)
                         }
                     })
                 } else {
-                    display.push(<GymDisplay key = {gym} reference={gym} status ={true}/>)
+                    display.push(<GymDisplay key = {gym} reference={gym} status ={true} user = {this.state.user} af = {this.alteredFavorites}/>)
                 }
                       
             })
@@ -104,17 +109,15 @@ class MainPage extends React.Component{
                     let path = gym.data().path
                     if (this.state.stateFilter != "none" || this.state.locationFilter != "none"){
                         checkGymWithFilter(path,this.state.locationFilter,this.state.stateFilter).then(valid => {
-                            console.log(valid, "THEHAOIHDOIHOAHDODSNFOIJ")
                             if(valid){
-                                console.log("PUSHING IT")
                                 if(!favs.includes(path)){
-                                    others.push(<GymDisplay key ={path} reference = {path} status = {false}/>)
+                                    others.push(<GymDisplay key ={path} reference = {path} status = {false} user = {this.state.user} af = {this.alteredFavorites}/>)
                                 }
                             }
                         })
                     } else {
                         if(!favs.includes(path)){
-                            others.push(<GymDisplay key ={path} reference = {path} status = {false}/>)
+                            others.push(<GymDisplay key ={path} reference = {path} status = {false} user = {this.state.user} af = {this.alteredFavorites}/>)
                         }
                     }
                 })
@@ -142,12 +145,14 @@ class MainPage extends React.Component{
                     </Col>
                 </header>
                 <button type='button' onClick={() =>{this.toggleFilter()}}>Filter</button>
-                <FilterModal isOpen = {this.state.filterOpen} toggleOpen = {this.toggleFilter}
-                    applyLocationFilter = {this.applyLocationFilter}
-                    applyStateFilter = {this.applyStateFilter}
-                    curLoc = {this.state.locationFilter}
-                    curSta = {this.state.stateFilter}
-                />
+                <div>
+                    <FilterModal isOpen = {this.state.filterOpen} toggleOpen = {this.toggleFilter}
+                        applyLocationFilter = {this.applyLocationFilter}
+                        applyStateFilter = {this.applyStateFilter}
+                        curLoc = {this.state.locationFilter}
+                        curSta = {this.state.stateFilter}
+                    />
+                </div>
                 
                 {/* Gym displays below */}
                 <div className='mainSection'>Favorited Gyms</div>    

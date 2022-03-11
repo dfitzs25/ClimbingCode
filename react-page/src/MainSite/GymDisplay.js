@@ -58,7 +58,7 @@ class Gym extends React.Component{
                         <div>{this.state.name}</div>
                         {this.findStatus()}
                     </div>
-                    <GymDisplayModel isOpen = {this.state.open} toggleOpen = {this.toggleOpen} path = {this.props.reference} status = {this.props.status}/>
+                    <GymDisplayModel isOpen = {this.state.open} toggleOpen = {this.toggleOpen} path = {this.props.reference} status = {this.props.status} user = {this.props.user} af = {this.props.af}/>
                 </Row>
             </button>)
         } else {
@@ -72,7 +72,7 @@ class Gym extends React.Component{
                             <div className="gymDisplayNotice">(no available image)</div>
                             {this.findStatus()}
                         </div>
-                        <GymDisplayModel isOpen = {this.state.open} toggleOpen = {this.toggleOpen} path = {this.props.reference} status = {this.props.status}/>
+                        <GymDisplayModel isOpen = {this.state.open} toggleOpen = {this.toggleOpen} path = {this.props.reference} status = {this.props.status} user = {this.props.user} af = {this.props.af}/>
                     </Row>
                </button>)
         }
@@ -93,7 +93,7 @@ const GymDisplay = (props) =>{
 
     return(
         <div>
-            <Gym reference = {props.reference} status = {props.status}/>
+            <Gym reference = {props.reference} status = {props.status} user ={props.user} af = {props.af}/>
         </div>
     )
 }

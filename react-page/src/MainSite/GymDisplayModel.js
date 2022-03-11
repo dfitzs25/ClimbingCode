@@ -1,6 +1,6 @@
 import React from "react"
 import { Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap"
-import { getClimbingGymAtributes } from "../Firebase"
+import { addGymToUserFavorite, getClimbingGymAtributes, removeGymFromUserFavorite } from "../Firebase"
 
 class GymModel extends React.Component {
     constructor(props){
@@ -14,7 +14,7 @@ class GymModel extends React.Component {
             state: "uncaught",
             location: "uncaught",
         }
-
+        this.alterFavorite = this.alterFavorite.bind(this)
         this.getAtributes()
     }
 
@@ -63,6 +63,29 @@ class GymModel extends React.Component {
         console.log("ACCEPTED NEED TO DO IMPLEMENTATION")
     }
 
+    alterFav(){
+        const{af} = this.props
+        af()
+    }
+
+    addGym(){
+        addGymToUserFavorite(this.props.user,this.props.path).then(()=>this.alterFav())
+    }
+
+    removeGym(){
+        removeGymFromUserFavorite(this.props.user,this.props.path).then(() =>this.alterFav())
+    }
+
+    alterFavorite(){
+        
+        console.log(this.props.user,this.props.path, "IN ALTERFAVORITES")
+        if (!this.props.status){
+            return <button type="button" onClick={() => {this.addGym()}}>Add To Favorites</button>
+        } else {
+            return <button type="button" onClick={() => {this.removeGym()}}>Remove From Favorites</button>
+        }
+    }
+
     render(){
         return(
             <div>
@@ -88,6 +111,7 @@ class GymModel extends React.Component {
                     </ModalBody>
                     <ModalFooter>
                         <div>
+                            <this.alterFavorite/>
                             <button type="button" onClick={this.makeRequest}>Make Request</button>
                             <button type="button" onClick={this.acceptRequest}>Accept Request</button>
                        </div>
@@ -101,7 +125,7 @@ class GymModel extends React.Component {
 const GymDisplayModel = (props) =>{
     return (
         <div>
-            <GymModel isOpen = {props.isOpen} toggleOpen = {props.toggleOpen} path = {props.path}/>
+            <GymModel isOpen = {props.isOpen} toggleOpen = {props.toggleOpen} path = {props.path} status = {props.status} user ={props.user} af = {props.af}/>
         </div>
     )
 }
